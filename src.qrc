@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>assets/email.config.txt</file>
+        <file>assets/server.config.txt</file>
+    </qresource>
+</RCC>
