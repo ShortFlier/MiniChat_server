@@ -2,7 +2,6 @@
 
 TempConnect::TempConnect(QWebSocket* sock):WebSocketConnect(sock)
 {
-
 }
 
 TempConnect::~TempConnect()
