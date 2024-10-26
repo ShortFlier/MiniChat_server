@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QWebSocket>
+#include "datahead.h"
 
 class WebSocketConnect : public QObject
 {
@@ -13,6 +14,7 @@ public:
     explicit WebSocketConnect(WebSocketConnect&& wsc);
     virtual ~WebSocketConnect()=0;
     QWebSocket* getSocket(){return socket;}
+    void sendText(const DataHead& head, const DataResult& result);
 
 signals:
     void closed();

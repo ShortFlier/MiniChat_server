@@ -7,6 +7,11 @@ WebSocketConnect::WebSocketConnect(QWebSocket* sock)
     socket=sock;
 }
 
+void WebSocketConnect::sendText(const DataHead &head,const DataResult &result)
+{
+    socket->sendTextMessage(head.getUrl()+result.data());
+}
+
 
 
 WebSocketConnect::~WebSocketConnect(){

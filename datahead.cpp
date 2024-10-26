@@ -97,3 +97,46 @@ QString DataHead::getUrl(const QString& _tp_type,const QString& _http_type,const
     url+=sepe;
     return url;
 }
+
+void DataHead::invert()
+{
+    if(_http_type!=nullptr){
+        if(*_http_type==request)
+            *_http_type=response;
+        else
+            *_http_type=request;
+    }
+}
+
+DataResult::DataResult(const QString &datastr)
+{
+    if(!datastr.isEmpty()){
+        QStringList strs=datastr.split(DataHead::sepe);
+        bool s;
+        int code = strs[0].toInt(&s);
+        if(s){  //请求——响应式
+            if(strs.size()>1)   //防止出现仅包含响应码而不包含数据部分
+                jsdata=QJsonDocument::fromJson(strs[1].toUtf8());
+        }else{  //消息推送式
+            code=0;
+            jsdata=QJsonDocument::fromJson(strs[0].toUtf8());
+        }
+    }
+}
+
+QString DataResult::data() const
+{
+    QString data;
+    if(code!=0){//说明不是消息推送
+        data=QString::number(code)+DataHead::sepe;
+    }
+    if(!jsdata.isNull())
+        data+=jsdata.toJson();
+    return data;
+}
+
+DataResult DataResult::error(const QString& msg)
+{
+    QJsonDocument jsd = QJsonDocument::fromJson(msg.toUtf8());
+    return DataResult(code_error, jsd);
+}

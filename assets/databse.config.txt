@@ -1,0 +1,12 @@
+QMYSQL
+localhost
+3306
+root
+administrator
+minichat
+<连接类型
+<ip地址
+<端口
+<用户名
+<密码
+<数据库名

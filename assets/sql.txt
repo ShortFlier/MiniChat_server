@@ -1,0 +1,3 @@
+<sql path="login">
+	select * from user;
+</sql>

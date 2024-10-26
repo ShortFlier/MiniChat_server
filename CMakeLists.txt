@@ -25,6 +25,8 @@ add_executable(chat_server
   webmanager.h webmanager.cpp
   webconnectpool.h webconnectpool.cpp
   webtelecom.h webtelecom.cpp
+  dbconnect.h dbconnect.cpp
+  controller.h controller.cpp
 )
 target_link_libraries(chat_server PUBLIC Qt${QT_VERSION_MAJOR}::Core)
 target_link_libraries(chat_server PRIVATE Qt6::WebSockets)
