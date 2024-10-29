@@ -8,6 +8,11 @@
 #include <QMutex>
 #include <QWaitCondition>
 #include <QMap>
+#include <QJsonObject>
+#include <QSqlQuery>
+
+#include "datahead.h"
+#include "entity.h"
 
 //数据库连接池
 class DBConnectPool : public QObject
@@ -18,9 +23,9 @@ public:
     ~DBConnectPool();
     bool init(int size=10);
     //取出一个连接
-    QSqlDatabase* getdb();
+    QSqlDatabase getdb();
     //将已取出的连接放回
-    void append(QSqlDatabase* db);
+    void append(QSqlDatabase db);
 
 signals:
 
@@ -35,7 +40,7 @@ private:
     QString password;
     QString database;
 
-    QList<QSqlDatabase*> dblist;
+    QList<QSqlDatabase> dblist;
 
     QMutex mutex;
     QWaitCondition cdv;
@@ -49,9 +54,18 @@ public:
     ~Mapper();
     //sql语句解析
     void load();
+
+    //验证账号密码是否正确
+    bool login_mapper(DataHead& head, DataResult& result);
+    //邮箱是否已注册
+    bool hasEmail_mapper(const QString& email);
+    //新用户
+    bool newUser(User& user);
+
 private:
     DBConnectPool* dbpool;
     QMap<QString, QString> path_sql;
+
 };
 
 #endif // DBCONNECT_H

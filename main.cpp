@@ -3,9 +3,8 @@
 #include <QSqlDatabase>
 #include <QSqlError>
 
-#include "webmanager.h"
-
-#include "littlesmtp.h"
+#include "captcha.h"
+#include "application.h"
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
@@ -21,10 +20,8 @@ int main(int argc, char *argv[])
     // If you do not need a running Qt event loop, remove the call
     // to a.exec() or use the Non-Qt Plain C++ Application template.
 
-
-    WebManager wm;
-    wm.start();
-    EmailSender smtp;
+    Application ap;
+    ap.start();
 
     return a.exec();
 }

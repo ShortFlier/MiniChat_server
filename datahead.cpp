@@ -1,4 +1,5 @@
 #include "datahead.h"
+#include <QJsonObject>
 #include <qdebug.h>
 
 const QString DataHead::websocket="websocket";
@@ -113,7 +114,7 @@ DataResult::DataResult(const QString &datastr)
     if(!datastr.isEmpty()){
         QStringList strs=datastr.split(DataHead::sepe);
         bool s;
-        int code = strs[0].toInt(&s);
+        code = strs[0].toInt(&s);
         if(s){  //请求——响应式
             if(strs.size()>1)   //防止出现仅包含响应码而不包含数据部分
                 jsdata=QJsonDocument::fromJson(strs[1].toUtf8());
@@ -137,6 +138,14 @@ QString DataResult::data() const
 
 DataResult DataResult::error(const QString& msg)
 {
-    QJsonDocument jsd = QJsonDocument::fromJson(msg.toUtf8());
-    return DataResult(code_error, jsd);
+    QJsonObject jo;
+    jo.insert("msg", msg);
+    return DataResult(code_error, QJsonDocument(jo));
+}
+
+DataResult DataResult::success(const QString &msg)
+{
+    QJsonObject jo;
+    jo.insert("msg", msg);
+    return DataResult(code_success, QJsonDocument(jo));
 }

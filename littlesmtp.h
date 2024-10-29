@@ -52,8 +52,12 @@ public:
         QString target;
         QString title;
         QString content;
-        email(const QString& tar, const QString& tle, const QString& ctent):target(tar), title(tle), content(ctent){}
+        email(const QString& tar, const QString& ctent, const QString& tle="Minichat Server"):target(tar), title(tle), content(ctent){}
+        email(){};
     };
+
+    static const QString regist_code;
+    static const QString regist_success;
 
     EmailSender(QObject *parent = nullptr);
     ~EmailSender();

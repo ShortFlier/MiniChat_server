@@ -4,6 +4,10 @@
 #include <qdebug.h>
 #include <QThread>
 
+
+const QString EmailSender::regist_code="亲爱的%1，欢迎使用MiniChat，以下验证码用于注册新的Minichat账号，请妥善使用，三分钟有效期：%2";
+const QString EmailSender::regist_success="亲爱的%1，您成功在MiniChat注册账号，以下是您的账号和密码，请妥善保存。\n账号：%2\n密码：%3";
+
 LittleSMTP::LittleSMTP(QObject *parent)
     : QObject{parent}
 {

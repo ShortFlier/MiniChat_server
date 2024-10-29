@@ -1,3 +1,12 @@
 <sql path="login">
-	select * from user;
+	select count(*) from user where account=:account and password=:password
+</sql>
+
+<sql path="hasEmail">
+	select count(*) from user where email=:email
+</sql>
+
+<sql path="newUser">
+	insert into user(email,account,password,name,create_time)
+	values(:email, :account, :password, :name, :create_time)
 </sql>

@@ -51,6 +51,8 @@ public:
     QString data() const;
     //生成一个错误result
     static DataResult error(const QString& msg);
+    //生成成功的result
+    static DataResult success(const QString& msg);
 
 public:
     enum code_result{code_success=200, code_error=400};

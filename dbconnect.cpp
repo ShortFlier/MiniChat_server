@@ -26,9 +26,8 @@ DBConnectPool::DBConnectPool(QObject *parent)
 DBConnectPool::~DBConnectPool()
 {
     while(!dblist.isEmpty()){
-        QSqlDatabase* db = dblist.takeFirst();
-        db->close();
-        delete db;
+        QSqlDatabase db = dblist.takeFirst();
+        db.close();
     }
 }
 
@@ -49,12 +48,12 @@ bool DBConnectPool::init(int size)
             return false;
         }
         //加入连接池
-        dblist.append(&db);
+        dblist.append(db);
     }
     return true;
 }
 
-QSqlDatabase *DBConnectPool::getdb()
+QSqlDatabase DBConnectPool::getdb()
 {
     while(true){
         QMutexLocker<QMutex> locker(&mutex);
@@ -62,13 +61,12 @@ QSqlDatabase *DBConnectPool::getdb()
             locker.unlock();
             cdv.wait(&mutex);
         }else{
-
             return dblist.takeFirst();
         }
     }
 }
 
-void DBConnectPool::append(QSqlDatabase *db)
+void DBConnectPool::append(QSqlDatabase db)
 {
     {
         QMutexLocker<QMutex> locker(&mutex);
@@ -129,3 +127,58 @@ void Mapper::load()
     }else
         qDebug()<<"assets/sql.txt 打开失败";
 }
+
+bool Mapper::login_mapper(DataHead &head, DataResult &result)
+{
+    QString sql=path_sql.value(*head._path);
+    QJsonObject jsob=result.jsdata.object();
+    QStringList keys=jsob.keys();
+    QSqlDatabase db=dbpool->getdb();
+    QSqlQuery query(db);
+    query.prepare(sql);
+    for(QString& key : keys)
+        query.bindValue(":"+key, jsob.value(key));
+    int count=0;
+    if(query.exec() && query.next()){
+        count = query.value(0).toInt();
+    }else
+        qDebug()<< "Error inserting data:" << query.lastError().text();
+    dbpool->append(db);
+    return count;
+}
+
+bool Mapper::hasEmail_mapper(const QString& email)
+{
+    QString sql=path_sql.value("hasEmail");
+    QSqlDatabase db=dbpool->getdb();
+    QSqlQuery query(db);
+    query.prepare(sql);
+    query.bindValue(":email", email);
+    int count=0;
+    if(query.exec() && query.next()){
+        count=query.value(0).toInt();
+        qDebug()<<count;
+    }else{
+        qDebug()<< "Error inserting data:" << query.lastError().text();
+    }
+    dbpool->append(db);
+    qDebug()<<"append";
+    return count;
+}
+
+bool Mapper::newUser(User &user)
+{
+    QString sql=path_sql.value("newUser");
+    QSqlDatabase db=dbpool->getdb();
+    QSqlQuery query(db);
+    query.prepare(sql);
+    user.bindValues(query);
+    if(query.exec()){
+        return true;
+    }else{
+        qDebug()<< "Error inserting data:" << query.lastError().text();
+        return false;
+    }
+}
+
+
