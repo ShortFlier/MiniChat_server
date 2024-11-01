@@ -20,7 +20,7 @@ WebManager::~WebManager()
 
 QUrl WebManager::loadcfg()
 {
-    QFile file(":/assets/server.config.txt");
+    QFile file("./assets/server.config.txt");
     file.open(QIODeviceBase::ReadOnly);
     if(file.isOpen()){
         QTextStream ts(&file);

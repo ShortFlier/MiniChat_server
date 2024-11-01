@@ -38,6 +38,8 @@ public:
     void regist_code(WebSocketConnect *wsc, DataHead& head, DataResult& result);
     //邮箱注册验证码接收确认path=regist_confirm
     void regist_confirm(WebSocketConnect *wsc, DataHead& head, DataResult& result);
+    //获取用户信息
+    void userinfo(WebSocketConnect *wsc, DataHead& head, DataResult& result);
 public:
     std::map<QString, void(HttpController::*)(WebSocketConnect *, DataHead&, DataResult&)> fmap;
     Mapper* mapper;

@@ -10,3 +10,9 @@
 	insert into user(email,account,password,name,create_time)
 	values(:email, :account, :password, :name, :create_time)
 </sql>
+
+<sql path="userinfo">
+	select id,email,account,name,create_time 
+	from user 
+	where account=:account
+</sql>

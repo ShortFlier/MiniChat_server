@@ -15,6 +15,18 @@ find_package(Qt6 REQUIRED COMPONENTS WebSockets)
 find_package(Qt6 REQUIRED COMPONENTS Sql)
 find_package(Qt6 REQUIRED COMPONENTS Core)
 
+#将dll文件夹下的dll拷贝到exe同级目录下
+# 查找所有的 DLL 文件
+file(GLOB DLL_FILES "${CMAKE_SOURCE_DIR}/dll/*.dll")
+# 将 DLL 文件拷贝到与可执行文件同级目录
+foreach(DLL_FILE ${DLL_FILES})
+    file(COPY ${DLL_FILE} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+endforeach()
+
+#将assets文件夹拷贝到exe同级目录下
+
+file(COPY "./assets" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
 add_executable(chat_server
   main.cpp
   littlesmtp.h littlesmtp.cpp
@@ -31,11 +43,14 @@ add_executable(chat_server
   captcha.h captcha.cpp
   entity.h
   entity.cpp
+  validconnect.h validconnect.cpp
 )
 target_link_libraries(chat_server PUBLIC Qt${QT_VERSION_MAJOR}::Core)
 target_link_libraries(chat_server PRIVATE Qt6::WebSockets)
 target_link_libraries(chat_server PRIVATE Qt6::Sql)
 target_link_libraries(chat_server PRIVATE Qt6::Core)
+
+
 
 include(GNUInstallDirs)
 install(TARGETS chat_server

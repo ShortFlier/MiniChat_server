@@ -5,10 +5,14 @@
 #include <QMutexLocker>
 #include <QRegularExpression>
 
+#define SQL(str) QString sql=path_sql.value(str);
+//取出连接，准备sql
+#define QUERY     QSqlDatabase db=dbpool->getdb(); QSqlQuery query(db); query.prepare(sql);
+
 DBConnectPool::DBConnectPool(QObject *parent)
     : QObject{parent}
 {
-    QFile file(":/assets/databse.config.txt");
+    QFile file("./assets/databse.config.txt");
     file.open(QIODeviceBase::ReadOnly);
     if(file.isOpen()){
         QTextStream ts(&file);
@@ -89,7 +93,7 @@ Mapper::~Mapper()
 
 void Mapper::load()
 {
-    QFile file(":/assets/sql.txt");
+    QFile file("./assets/sql.txt");
     file.open(QIODeviceBase::ReadOnly);
     if(file.isOpen()){
         //解析sql语句
@@ -174,11 +178,34 @@ bool Mapper::newUser(User &user)
     query.prepare(sql);
     user.bindValues(query);
     if(query.exec()){
+        dbpool->append(db);
         return true;
     }else{
         qDebug()<< "Error inserting data:" << query.lastError().text();
+        dbpool->append(db);
         return false;
     }
+}
+
+User* Mapper::userinfo(const QString &account)
+{
+    SQL("userinfo");
+    QUERY;
+    query.bindValue(":account", account);
+    User* user=nullptr;
+    if(query.exec() & query.next()){
+        //id,email,account,name,create_time
+        user=new User;
+        user->id=query.value(0).toInt();
+        user->email=query.value(1).toString();
+        user->account=query.value(2).toString();
+        user->name=query.value(3).toString();
+        user->create_time=query.value(4).toDateTime();
+    }else{
+        qDebug()<< "Error inserting data:" << query.lastError().text();
+    }
+    dbpool->append(db);
+    return user;
 }
 
 

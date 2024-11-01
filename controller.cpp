@@ -1,5 +1,6 @@
 #include "controller.h"
 #include "entity.h"
+#include "webconnect.h"
 
 //中间处理层
 Controller::Controller(QObject *parent)
@@ -38,6 +39,7 @@ HttpController::HttpController()
     fmap.insert(Pair("login", &HttpController::login));
     fmap.insert(Pair("regist_code", &HttpController::regist_code));
     fmap.insert(Pair("regist_confirm", &HttpController::regist_confirm));
+    fmap.insert(Pair("userinfo", &HttpController::userinfo));
 }
 
 HttpController::~HttpController()
@@ -47,13 +49,19 @@ HttpController::~HttpController()
 
 void HttpController::login(WebSocketConnect *wsc, DataHead &head, DataResult &result)
 {
-    qDebug()<<"登入请求处理";
+    head.showHTTP();
     bool v = mapper->login_mapper(head, result);
     head.invert();
     if(v){
         QJsonObject jo;
-        jo.insert("account", result.jsdata.object().value("account").toString());
+        QString account=result.jsdata.object().value("account").toString();
+        jo.insert("account", account);
         wsc->sendText(head, DataResult(200, QJsonDocument(jo)));
+        //升级连接
+        TempConnect* tc=static_cast<TempConnect*>(wsc);
+        qDebug()<<"upgrade";
+        tc->upgrade(account);
+        qDebug()<<"upgraded";
     }else{
         DataResult rs = DataResult::error("密码错误或账号不存在");
         wsc->sendText(head, rs);
@@ -62,6 +70,7 @@ void HttpController::login(WebSocketConnect *wsc, DataHead &head, DataResult &re
 
 void HttpController::regist_code(WebSocketConnect *wsc, DataHead &head, DataResult &result)
 {
+    head.showHTTP();
     //获取邮箱
     QString email=result.jsdata.object().value("email").toString();
     qDebug()<<email;
@@ -95,6 +104,7 @@ void HttpController::regist_code(WebSocketConnect *wsc, DataHead &head, DataResu
 
 void HttpController::regist_confirm(WebSocketConnect *wsc, DataHead &head, DataResult &result)
 {
+    head.showHTTP();
     //邮箱、验证码
     QString email=result.jsdata.object().value("email").toString();
     QString code=result.jsdata.object().value("code").toString();
@@ -121,4 +131,21 @@ void HttpController::regist_confirm(WebSocketConnect *wsc, DataHead &head, DataR
             wsc->sendText(head, DataResult::error("注册失败，请重试"));
     }else
         wsc->sendText(head, DataResult::error("验证码错误"));
+}
+
+void HttpController::userinfo(WebSocketConnect *wsc, DataHead &head, DataResult &result)
+{
+    head.showHTTP();
+    QString account=result.getstr("account");
+    head.invert();
+    User* user=mapper->userinfo(account);
+    DataResult rs;
+    if(user){
+        rs.code=DataResult::code_success;
+        rs.jsdata=QJsonDocument(user->json());
+    }else{
+        rs=DataResult::error("用户不存在");
+    }
+    wsc->sendText(head, rs);
+    delete user;
 }

@@ -2,6 +2,7 @@
 #define ENTITY_H
 
 #include <QDateTime>
+#include <QJsonObject>
 #include <QSqlQuery>
 #include <QString>
 
@@ -15,6 +16,7 @@ struct User
     QString password;
     QString name;
     QDateTime create_time;
+
     User(const QString& email, const QString account, const QString password, const QString name)
         :email(email),account(account),password(password),name(name)
     {
@@ -25,6 +27,7 @@ struct User
         :id(id),email(email),account(account),password(password),name(name),create_time(create_time){}
 
     void bindValues(QSqlQuery& query);
+    QJsonObject json();
 };
 
 

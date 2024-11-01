@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <qjsondocument.h>
+#include <QJsonObject>
 
 class DataHead : public QObject
 {
@@ -13,6 +14,7 @@ public:
     DataHead(const DataHead&)=delete;
     ~DataHead();
     int show();
+    void showHTTP(){qDebug()<<*_tp_type<<seph<<*_http_type<<sep<<*_path<<sep<<*_tpid<<sepe;}
     DataHead(const QString& _tp_type,const QString& _http_type,const QString& _path,const QString& _tpid);
     QString getUrl() const;
     static QString getUrl(const QString& _tp_type,const QString& _http_type,const QString& _path,const QString& _tpid);
@@ -49,6 +51,8 @@ public:
     DataResult(const QString& datastr);
     //合并code和jsdata,转成格式可以发送的数据部分
     QString data() const;
+    QString getstr(const QString& str)const { return jsdata.object().value(str).toString();}
+    void show()const{ qDebug()<<"code:"<<code<<jsdata.object();}
     //生成一个错误result
     static DataResult error(const QString& msg);
     //生成成功的result

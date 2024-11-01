@@ -14,6 +14,9 @@ WebConnectPool::~WebConnectPool()
     for(auto v : tempcs){
         delete v;
     }
+    for(auto v : vcmap){
+        delete v;
+    }
 }
 
 void WebConnectPool::addTempConnect(TempConnect *temp)
@@ -28,6 +31,7 @@ void WebConnectPool::addTempConnect(TempConnect *temp)
     connect(temp->getSocket(), &QWebSocket::textMessageReceived, [=](const QString& msg){
         webTelecom->textMsgHandler(temp, msg);
     });
+    connect(temp, &TempConnect::upgraded, this, &WebConnectPool::upgraded);
 }
 
 void WebConnectPool::removeTempConnect(TempConnect *temp)
@@ -36,4 +40,22 @@ void WebConnectPool::removeTempConnect(TempConnect *temp)
     //移除temp
     tempcs.removeOne(temp);
     delete temp;
+}
+
+void WebConnectPool::upgraded(ValidConnect *vc, TempConnect* oldtc)
+{
+    removeTempConnect(oldtc);
+    qDebug()<<"odltc";
+    vcmap.insert(vc->getAccount(), vc);
+    qDebug()<<vc->getAccount()<<" 上线了!";
+    vc->getSocket()->disconnect();
+    //可读取文本数据
+    connect(vc->getSocket(), &QWebSocket::textMessageReceived, [=](const QString& msg){
+        webTelecom->textMsgHandler(vc, msg);
+    });
+    //vc断开连接时，从map中移除
+    connect(vc->getSocket(), &QWebSocket::disconnected, [=](){
+        vcmap.remove(vc->getAccount());
+        qDebug()<<vc->getAccount()<<" 下线了!";
+    });
 }

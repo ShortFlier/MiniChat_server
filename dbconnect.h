@@ -61,6 +61,8 @@ public:
     bool hasEmail_mapper(const QString& email);
     //新用户
     bool newUser(User& user);
+    //获取用户信息
+    User* userinfo(const QString& account);
 
 private:
     DBConnectPool* dbpool;

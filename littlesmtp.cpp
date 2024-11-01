@@ -34,7 +34,7 @@ QString LittleSMTP::password;
 void LittleSMTP::load()
 {
     //解析配置文件
-    QFile file(":/assets/email.config.txt");
+    QFile file("./assets/email.config.txt");
     file.open(QIODeviceBase::ReadOnly);
     if(file.isOpen()){
         QTextStream ts(&file);

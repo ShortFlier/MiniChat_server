@@ -6,6 +6,7 @@
 #include "webconnect.h"
 #include "webtelecom.h"
 #include <QMutex>
+#include <QMap>
 
 class WebConnectPool : public QObject
 {
@@ -17,13 +18,17 @@ public:
 public slots:
     void addTempConnect(TempConnect* temp);
     void removeTempConnect(TempConnect* temp);
+    void upgraded(ValidConnect* vc, TempConnect* oldtc);
 
 signals:
 
 private:
     QMutex mutex;
+    //临时连接池
     QList<TempConnect*> tempcs;
     WebTelecom* webTelecom=nullptr;
+    //正规连接池
+    QMap<QString,ValidConnect*> vcmap;
 };
 
 #endif // WEBCONNECTPOOL_H
