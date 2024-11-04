@@ -18,5 +18,6 @@ QJsonObject User::json()
     jo.insert("password",password);
     jo.insert("name",name);
     jo.insert("create_time",create_time.toString("yyyy-MM-dd HH:mm:ss"));
+    jo.insert("imgPath", imgPath);
     return jo;
 }

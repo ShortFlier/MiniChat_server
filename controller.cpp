@@ -2,6 +2,8 @@
 #include "entity.h"
 #include "webconnect.h"
 
+#define INSERT(path, ptr) fmap.insert(Pair(path, ptr));
+
 //中间处理层
 Controller::Controller(QObject *parent)
     : QObject{parent}
@@ -40,6 +42,7 @@ HttpController::HttpController()
     fmap.insert(Pair("regist_code", &HttpController::regist_code));
     fmap.insert(Pair("regist_confirm", &HttpController::regist_confirm));
     fmap.insert(Pair("userinfo", &HttpController::userinfo));
+    INSERT("rename", &HttpController::rename);
 }
 
 HttpController::~HttpController()
@@ -148,4 +151,17 @@ void HttpController::userinfo(WebSocketConnect *wsc, DataHead &head, DataResult 
     }
     wsc->sendText(head, rs);
     delete user;
+}
+
+void HttpController::rename(WebSocketConnect *wsc, DataHead &head, DataResult &result)
+{
+    head.showHTTP();
+    head.invert();
+    QString account=result.getstr("account");
+    QString newname=result.getstr("newname");
+    bool b=mapper->rename(account, newname);
+    if(b){
+        wsc->sendText(head, DataResult::success());
+    }else
+        wsc->sendText(head, DataResult::error("修改失败"));
 }

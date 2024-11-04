@@ -12,7 +12,11 @@
 </sql>
 
 <sql path="userinfo">
-	select id,email,account,name,create_time 
-	from user 
-	where account=:account
+	select id,email,user.account,name,create_time,path
+	from user left join images on user.account=images.account
+	where user.account=:account
+</sql>
+
+<sql path="rename">
+	update user set name=:name where account=:account
 </sql>

@@ -9,6 +9,8 @@
 #include "captcha.h"
 #include "littlesmtp.h"
 
+#define WEB_PARAMETER WebSocketConnect *wsc, DataHead& head, DataResult& result
+
 class HttpController;
 
 class Controller : public QObject
@@ -40,6 +42,8 @@ public:
     void regist_confirm(WebSocketConnect *wsc, DataHead& head, DataResult& result);
     //获取用户信息
     void userinfo(WebSocketConnect *wsc, DataHead& head, DataResult& result);
+    //修改昵称
+    void rename(WEB_PARAMETER);
 public:
     std::map<QString, void(HttpController::*)(WebSocketConnect *, DataHead&, DataResult&)> fmap;
     Mapper* mapper;

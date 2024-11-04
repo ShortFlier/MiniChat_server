@@ -16,6 +16,7 @@ struct User
     QString password;
     QString name;
     QDateTime create_time;
+    QString imgPath;
 
     User(const QString& email, const QString account, const QString password, const QString name)
         :email(email),account(account),password(password),name(name)

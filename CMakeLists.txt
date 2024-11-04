@@ -15,6 +15,7 @@ find_package(Qt6 REQUIRED COMPONENTS WebSockets)
 find_package(Qt6 REQUIRED COMPONENTS Sql)
 find_package(Qt6 REQUIRED COMPONENTS Core)
 
+
 #将dll文件夹下的dll拷贝到exe同级目录下
 # 查找所有的 DLL 文件
 file(GLOB DLL_FILES "${CMAKE_SOURCE_DIR}/dll/*.dll")
@@ -44,6 +45,7 @@ add_executable(chat_server
   entity.h
   entity.cpp
   validconnect.h validconnect.cpp
+  mapper.h mapper.cpp
 )
 target_link_libraries(chat_server PUBLIC Qt${QT_VERSION_MAJOR}::Core)
 target_link_libraries(chat_server PRIVATE Qt6::WebSockets)
