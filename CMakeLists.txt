@@ -46,6 +46,8 @@ add_executable(chat_server
   entity.cpp
   validconnect.h validconnect.cpp
   mapper.h mapper.cpp
+  filecontroller.h filecontroller.cpp
+  bincontroller.h bincontroller.cpp
 )
 target_link_libraries(chat_server PUBLIC Qt${QT_VERSION_MAJOR}::Core)
 target_link_libraries(chat_server PRIVATE Qt6::WebSockets)

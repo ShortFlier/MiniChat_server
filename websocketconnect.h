@@ -15,6 +15,7 @@ public:
     virtual ~WebSocketConnect()=0;
     QWebSocket* getSocket(){return socket;}
     void sendText(const DataHead& head, const DataResult& result);
+    void sendBinary(const DataHead& head, int code, QByteArray& data);
 
 signals:
     void closed();

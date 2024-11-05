@@ -1,4 +1,5 @@
 #include "mapper.h"
+#include "filecontroller.h"
 
 #include <QFile>
 
@@ -73,7 +74,7 @@ bool Mapper::login_mapper(DataHead &head, DataResult &result)
     if(query.exec() && query.next()){
         count = query.value(0).toInt();
     }else
-        qDebug()<< "Error inserting data:" << query.lastError().text();
+        qDebug()<< "Error login_mapper:" << query.lastError().text();
     dbpool->append(db);
     return count;
 }
@@ -90,7 +91,7 @@ bool Mapper::hasEmail_mapper(const QString& email)
         count=query.value(0).toInt();
         qDebug()<<count;
     }else{
-        qDebug()<< "Error inserting data:" << query.lastError().text();
+        qDebug()<< "Error hasEmail_mapper:" << query.lastError().text();
     }
     dbpool->append(db);
     qDebug()<<"append";
@@ -108,7 +109,7 @@ bool Mapper::newUser(User &user)
         dbpool->append(db);
         return true;
     }else{
-        qDebug()<< "Error inserting data:" << query.lastError().text();
+        qDebug()<< "Error newUser:" << query.lastError().text();
         dbpool->append(db);
         return false;
     }
@@ -128,9 +129,9 @@ User* Mapper::userinfo(const QString &account)
         user->account=query.value(2).toString();
         user->name=query.value(3).toString();
         user->create_time=query.value(4).toDateTime();
-        user->imgPath=query.value(5).toString();
+        user->imgPath=FileController::getUImg(account);
     }else{
-        qDebug()<< "Error inserting data:" << query.lastError().text();
+        qDebug()<< "Error userinfo:" << query.lastError().text();
     }
     dbpool->append(db);
     return user;
@@ -143,6 +144,8 @@ bool Mapper::rename(const QString &account, const QString &newname)
     query.bindValue(":account", account);
     query.bindValue(":name", newname);
     bool b=query.exec();
+    if(!b)
+        qDebug()<< "Error rename:" << query.lastError().text();
     dbpool->append(db);
     return b;
 }

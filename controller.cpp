@@ -9,6 +9,7 @@ Controller::Controller(QObject *parent)
     : QObject{parent}
 {
     hctrl=new HttpController();
+    bctrl=new BinController();
 }
 
 Controller::~Controller()
@@ -33,6 +34,12 @@ void Controller::unknow(WebSocketConnect *wsc, DataHead &head, DataResult &resul
     head.show();
     head.invert();
     wsc->sendText(head, DataResult::error("未知通信"));
+}
+
+void Controller::binHandler(WebSocketConnect *wsc, DataHead &head, QJsonDocument &json, QByteArray& data)
+{
+    head.showHTTP();
+    bctrl->handler(wsc,head,json,data);
 }
 
 HttpController::HttpController()
@@ -61,10 +68,8 @@ void HttpController::login(WebSocketConnect *wsc, DataHead &head, DataResult &re
         jo.insert("account", account);
         wsc->sendText(head, DataResult(200, QJsonDocument(jo)));
         //升级连接
-        TempConnect* tc=static_cast<TempConnect*>(wsc);
-        qDebug()<<"upgrade";
+        TempConnect* tc=dynamic_cast<TempConnect*>(wsc);
         tc->upgrade(account);
-        qDebug()<<"upgraded";
     }else{
         DataResult rs = DataResult::error("密码错误或账号不存在");
         wsc->sendText(head, rs);

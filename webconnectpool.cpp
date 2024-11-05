@@ -53,6 +53,10 @@ void WebConnectPool::upgraded(ValidConnect *vc, TempConnect* oldtc)
     connect(vc->getSocket(), &QWebSocket::textMessageReceived, [=](const QString& msg){
         webTelecom->textMsgHandler(vc, msg);
     });
+    //可读取二进制数据
+    connect(vc->getSocket(), &QWebSocket::binaryMessageReceived, [=](const QByteArray& data){
+        webTelecom->binaryHandler(vc, data);
+    });
     //vc断开连接时，从map中移除
     connect(vc->getSocket(), &QWebSocket::disconnected, [=](){
         vcmap.remove(vc->getAccount());

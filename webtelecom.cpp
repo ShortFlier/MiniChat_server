@@ -24,3 +24,22 @@ void WebTelecom::textMsgHandler(WebSocketConnect *wsc, QString msg)
     DataResult result(ts.readAll());
     ctrl->handle(wsc, head, result);
 }
+
+void WebTelecom::binaryHandler(WebSocketConnect *wsc, QByteArray data)
+{
+    //分离
+    QByteArray h= data.mid(0, HLENGTH);
+    //请求路径部分
+    int i = h.indexOf(DataHead::sepe.toUtf8());
+    QString hstr=h.left(i);
+    DataHead head(hstr);
+    //json数据部分
+    QByteArray js = h.mid(i+2);
+    //提取有效json部分
+    i=js.lastIndexOf('\n');
+    js=js.left(i);
+    QJsonDocument json = QJsonDocument::fromJson(js);
+    //数据部分
+    QByteArray d=data.mid(HLENGTH);
+    ctrl->binHandler(wsc, head, json, d);
+}

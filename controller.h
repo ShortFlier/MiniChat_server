@@ -3,11 +3,12 @@
 
 #include <QObject>
 #include "datahead.h"
-#include "dbconnect.h"
 #include "websocketconnect.h"
 #include <map>
+#include "bincontroller.h"
 #include "captcha.h"
 #include "littlesmtp.h"
+#include "mapper.h"
 
 #define WEB_PARAMETER WebSocketConnect *wsc, DataHead& head, DataResult& result
 
@@ -21,11 +22,14 @@ public:
     ~Controller();
     void handle(WebSocketConnect *wsc, DataHead& head, DataResult& result);
     void unknow(WebSocketConnect *wsc, DataHead& head, DataResult& result);
+    //二进制处理
+    void binHandler(WebSocketConnect *wsc, DataHead& head, QJsonDocument& json, QByteArray& data);
 
 signals:
 
 private:
     HttpController* hctrl;
+    BinController* bctrl;
 };
 
 class HttpController{
