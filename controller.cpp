@@ -2,7 +2,10 @@
 #include "entity.h"
 #include "webconnect.h"
 
+#include <QJsonArray>
+
 #define INSERT(path, ptr) fmap.insert(Pair(path, ptr));
+#define HEADSHOW     head.show();   head.invert();
 
 //中间处理层
 Controller::Controller(QObject *parent)
@@ -50,6 +53,9 @@ HttpController::HttpController()
     fmap.insert(Pair("regist_confirm", &HttpController::regist_confirm));
     fmap.insert(Pair("userinfo", &HttpController::userinfo));
     INSERT("rename", &HttpController::rename);
+    INSERT("search", &HttpController::search);
+    INSERT("invite", &HttpController::invite);
+    INSERT("myinvite", &HttpController::myinvite);
 }
 
 HttpController::~HttpController()
@@ -169,4 +175,46 @@ void HttpController::rename(WebSocketConnect *wsc, DataHead &head, DataResult &r
         wsc->sendText(head, DataResult::success());
     }else
         wsc->sendText(head, DataResult::error("修改失败"));
+}
+
+void HttpController::search(WebSocketConnect *wsc, DataHead &head, DataResult &result)
+{
+    head.showHTTP();
+    head.invert();
+    QString act=result.getstr("account");
+    QString frd=result.getstr("friend");
+    if(frd.length()>8){
+        //查找用户
+        User* user=mapper->userinfo(frd);
+        if(user==nullptr){
+            wsc->sendText(head, DataResult::error("用户不存在"));
+            return;
+        }
+        //查看是否为好友
+        bool b=mapper->isFriend(act, frd);
+        QJsonObject jo=user->json();
+        jo.insert("isfriend",b);
+        wsc->sendText(head, DataResult(DataResult::code_success, QJsonDocument(jo)));
+    }else{
+        //查找群
+        wsc->sendText(head, DataResult::error("群聊不存在"));
+    }
+}
+
+void HttpController::invite(WebSocketConnect *wsc, DataHead &head, DataResult &result)
+{
+    head.showHTTP();
+    head.invert();
+    bool b = mapper->invite(result);
+    if(b){
+        wsc->sendText(head, DataResult::success());
+    }
+}
+
+void HttpController::myinvite(WebSocketConnect *wsc, DataHead &head, DataResult &result)
+{
+    HEADSHOW;
+    QString act=result.getstr("account");
+    QJsonArray ja=mapper->myinvite(act);
+    wsc->sendText(head, DataResult(DataResult::code_success, QJsonDocument(ja)));
 }

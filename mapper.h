@@ -25,6 +25,12 @@ public:
     User* userinfo(const QString& account);
     //重命名
     bool rename(const QString& account, const QString& newname);
+    //好友检查
+    bool isFriend(const QString& act, const QString& frd);
+    //邀请
+    bool invite(DataResult& result);
+    //获取邀请
+    QJsonArray myinvite(const QString& account);
 
 private:
     DBConnectPool* dbpool;

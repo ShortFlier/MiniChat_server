@@ -20,3 +20,18 @@
 <sql path="rename">
 	update user set name=:name where account=:account
 </sql>
+
+<sql path="search">
+	select count(*) from friends where account=:account and friend=:friend;
+</sql>
+
+<sql path="invite">
+	insert into invitations(inviter,invitees,group_act,note)
+	values(:inviter, :invitees, :group, :note)
+</sql>
+
+<sql path="myinvite">
+	select invitations.id, account, name, group_act, note
+	from invitations inner join account on invitations.inviter=user.account
+	where invitees=:invitees
+</sql>

@@ -48,6 +48,13 @@ public:
     void userinfo(WebSocketConnect *wsc, DataHead& head, DataResult& result);
     //修改昵称
     void rename(WEB_PARAMETER);
+    //用户、群搜索
+    void search(WEB_PARAMETER);
+    //邀请
+    void invite(WEB_PARAMETER);
+    //获取邀请
+    void myinvite(WEB_PARAMETER);
+
 public:
     std::map<QString, void(HttpController::*)(WebSocketConnect *, DataHead&, DataResult&)> fmap;
     Mapper* mapper;

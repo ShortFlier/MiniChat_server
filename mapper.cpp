@@ -2,6 +2,7 @@
 #include "filecontroller.h"
 
 #include <QFile>
+#include <QJsonArray>
 
 #define SQL(str) QString sql=path_sql.value(str);
 //取出连接，准备sql
@@ -148,4 +149,71 @@ bool Mapper::rename(const QString &account, const QString &newname)
         qDebug()<< "Error rename:" << query.lastError().text();
     dbpool->append(db);
     return b;
+}
+
+bool Mapper::isFriend(const QString &act, const QString &frd)
+{
+    int c=0;
+    SQL("search");
+    QUERY;
+    query.bindValue(":account",act);
+    query.bindValue(":friend",frd);
+    if(query.exec() && query.next())
+        c=query.value(0).toInt();
+    else
+        qDebug()<< "Error isFriend:" << query.lastError().text();
+    dbpool->append(db);
+    return c;
+}
+
+bool Mapper::invite(DataResult &result)
+{
+    QJsonObject jo=result.jsdata.object();
+    QString group;
+    if(jo.value("group")!=QJsonValue::Undefined){
+        group=jo.value("group").toString();
+    }
+    SQL("invite");
+    QUERY;
+    query.bindValue(":inviter", jo.value("inviter").toString());
+    query.bindValue(":invitees", jo.value("invitees").toString());
+    query.bindValue(":group", jo.value("group").toString());
+    query.bindValue(":note", jo.value("note").toString());
+    bool b=query.exec();
+    if(!b)
+        qDebug()<< "Error invite:" << query.lastError().text();
+    dbpool->append(db);
+    return b;
+}
+
+QJsonArray Mapper::myinvite(const QString &account)
+{
+    QJsonArray jar;
+    SQL("myinvite");
+    QUERY;
+    query.bindValue(":invitees", account);
+    if(query.exec()){
+        while(query.next()){
+            int id=query.value(0).toUInt();//id
+            QString act=query.value(1).toString();//邀请人账号
+            QString name=query.value(2).toString();//邀请人名
+            QString group;//群号，不一定有
+            QString note=query.value(4).toString();//备注
+            QJsonObject jo;
+            jo.insert("id",id);
+            jo.insert("account",act);
+            jo.insert("name", name);
+            jo.insert("note", note);
+            if(query.value(3).isNull()){//群邀请
+                group=query.value(3).toString();
+                jo.insert("group", group);
+            }else{//好友邀请
+                jo.insert("group", group);
+            }
+            jar.append(jo);
+        }
+    }else
+        qDebug()<< "Error myinvite:" << query.lastError().text();
+    dbpool->append(db);
+    return jar;
 }
