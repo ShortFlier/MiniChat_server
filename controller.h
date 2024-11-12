@@ -54,6 +54,12 @@ public:
     void invite(WEB_PARAMETER);
     //获取邀请
     void myinvite(WEB_PARAMETER);
+    //回复邀请
+    void reinvite(WEB_PARAMETER);
+    //获取好友列表
+    void friendlist(WEB_PARAMETER);
+    //删除好友
+    void dlefriend(WEB_PARAMETER);
 
 public:
     std::map<QString, void(HttpController::*)(WebSocketConnect *, DataHead&, DataResult&)> fmap;

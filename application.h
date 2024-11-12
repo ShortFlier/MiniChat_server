@@ -11,12 +11,12 @@ class Application : public QObject
 public:
     explicit Application(QObject *parent = nullptr);
     void start();
-
+    static bool online(const QString& act);
 signals:
 
 private:
     //网络调度
-    WebManager wm;
+    static WebManager* wm;
 
 };
 

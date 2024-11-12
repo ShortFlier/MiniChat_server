@@ -17,6 +17,7 @@ public:
     QUrl loadcfg();
     //启动服务器
     void start();
+    bool online(const QString& act);
 
 private:
     QWebSocketServer* server=nullptr;

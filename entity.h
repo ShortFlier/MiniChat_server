@@ -32,4 +32,14 @@ struct User
 };
 
 
+struct Frd{
+    int id;
+    QString act;
+    QString name;
+    bool online;
+
+    Frd(int id, const QString& act, const QString& name, bool online=false):id(id),act(act),name(name),online(online){}
+    QJsonObject json();
+};
+
 #endif // ENTITY_H

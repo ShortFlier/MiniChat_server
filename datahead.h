@@ -57,6 +57,7 @@ public:
     static DataResult error(const QString& msg);
     //生成成功的result
     static DataResult success(const QString& msg="success");
+    static DataResult success(const QJsonDocument& msg);
 
 public:
     enum code_result{code_success=200, code_error=400};

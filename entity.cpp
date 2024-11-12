@@ -21,3 +21,13 @@ QJsonObject User::json()
     jo.insert("imgPath", imgPath);
     return jo;
 }
+
+QJsonObject Frd::json()
+{
+    QJsonObject jo;
+    jo.insert("id",id);
+    jo.insert("account",act);
+    jo.insert("name",name);
+    jo.insert("online",online);
+    return jo;
+}

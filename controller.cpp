@@ -1,11 +1,12 @@
 #include "controller.h"
+#include "application.h"
 #include "entity.h"
 #include "webconnect.h"
 
 #include <QJsonArray>
 
 #define INSERT(path, ptr) fmap.insert(Pair(path, ptr));
-#define HEADSHOW     head.show();   head.invert();
+#define HEADSHOW     head.showHTTP();   head.invert();
 
 //中间处理层
 Controller::Controller(QObject *parent)
@@ -34,7 +35,7 @@ void Controller::handle(WebSocketConnect *wsc, DataHead &head, DataResult &resul
 
 void Controller::unknow(WebSocketConnect *wsc, DataHead &head, DataResult &result)
 {
-    head.show();
+    head.showHTTP();
     head.invert();
     wsc->sendText(head, DataResult::error("未知通信"));
 }
@@ -56,6 +57,9 @@ HttpController::HttpController()
     INSERT("search", &HttpController::search);
     INSERT("invite", &HttpController::invite);
     INSERT("myinvite", &HttpController::myinvite);
+    INSERT("reinvite", &HttpController::reinvite);
+    INSERT("friendlist", &HttpController::friendlist);
+    INSERT("dlefriend", &HttpController::dlefriend);
 }
 
 HttpController::~HttpController()
@@ -217,4 +221,46 @@ void HttpController::myinvite(WebSocketConnect *wsc, DataHead &head, DataResult 
     QString act=result.getstr("account");
     QJsonArray ja=mapper->myinvite(act);
     wsc->sendText(head, DataResult(DataResult::code_success, QJsonDocument(ja)));
+}
+
+void HttpController::reinvite(WebSocketConnect *wsc, DataHead &head, DataResult &result)
+{
+    HEADSHOW;
+    QJsonObject jo=result.jsdata.object();
+    qDebug()<<jo;
+    int id=jo.value("id").toInt();
+    bool status=jo.value("status").toBool();
+    mapper->delinvite(id);
+    QString invitees=result.getstr("invitees");//被邀请人
+    QString name=result.getstr("name");
+    QString selfname=result.getstr("self");
+    if(status){
+        if(jo.value("group").isUndefined()){//好友邀请
+            QString act=result.getstr("account");
+            mapper->newfriend(act, invitees, name, selfname);
+        }else{//群邀请
+            QString group=result.getstr("group");
+        }
+    }
+}
+
+void HttpController::friendlist(WebSocketConnect *wsc, DataHead &head, DataResult &result)
+{
+    HEADSHOW;
+    QString act=result.getstr("account");
+    auto flist = mapper->friendlist(act);
+    QJsonArray ja;
+    for(Frd& v : flist){
+        v.online=Application::online(v.act);
+        ja.append(v.json());
+    }
+    wsc->sendText(head, DataResult(DataResult::code_success, QJsonDocument(ja)));
+}
+
+void HttpController::dlefriend(WebSocketConnect *wsc, DataHead &head, DataResult &result)
+{
+    HEADSHOW;
+    QString act=result.getstr("account");
+    QString frd=result.getstr("friend");
+    mapper->dlefriend(act,frd);
 }

@@ -217,3 +217,93 @@ QJsonArray Mapper::myinvite(const QString &account)
     dbpool->append(db);
     return jar;
 }
+
+bool Mapper::delinvite(int id)
+{
+    SQL("delinvite");
+    QUERY;
+    query.bindValue(":id", id);
+    bool b=query.exec();
+    if(!b)
+        qDebug()<< "Error myinvite:" << query.lastError().text();
+    dbpool->append(db);
+    return b;
+}
+
+bool Mapper::newfriend(const QString &act, const QString &frd, const QString &name, const QString& selfname)
+{
+    SQL("newfriend");
+    QUERY;
+
+    // 开始事务
+    if (!db.transaction()) {
+        qDebug() << "Failed to start transaction newfriend:" << db.lastError().text();
+        dbpool->append(db);
+        return false;  // 或者根据需要采取其他措施
+    }
+
+    query.bindValue(":account", act);
+    query.bindValue(":friend", frd);
+    query.bindValue(":name", selfname);
+    bool b=query.exec();
+    if(!b){
+        qDebug()<< "Error newfriend:" << query.lastError().text();
+        db.rollback();
+        dbpool->append(db);
+        return false;
+    }
+
+    query.bindValue(":account", frd);
+    query.bindValue(":friend", act);
+    query.bindValue(":name", name);
+    b=query.exec();
+    if(!b){
+        qDebug()<< "Error newfriend:" << query.lastError().text();
+        db.rollback();
+        dbpool->append(db);
+        return false;
+    }
+
+    // 提交事务
+    if (!db.commit()) {
+        qDebug() << "Failed to commit transaction newfriend:" << db.lastError().text();
+        dbpool->append(db);
+        return false; // 或者根据需要采取其他措施
+    }
+
+    dbpool->append(db);
+    return b;
+}
+
+std::vector<Frd> Mapper::friendlist(const QString &act)
+{
+    SQL("friendlist");
+    QUERY;
+    query.bindValue(":account",act);
+    std::vector<Frd> fls;
+    if(query.exec()){
+        while(query.next()){
+            fls.push_back(Frd(query.value(0).toInt(),query.value(1).toString(),query.value(2).toString()));
+        }
+    }else{
+        qDebug()<< "Error friendlist:" << query.lastError().text();
+    }
+    dbpool->append(db);
+    return fls;
+}
+
+bool Mapper::dlefriend(const QString &act, const QString &frd)
+{
+    SQL("dlefriend");
+    QUERY;
+    query.bindValue(":act",act);
+    query.bindValue(":fdr",act);
+    query.bindValue(":frd",frd);
+    query.bindValue(":atc",frd);
+    bool b=query.exec();
+    if(!b)
+        qDebug()<< "Error myinvite:" << query.lastError().text();
+    query.lastQuery();
+    dbpool->append(db);
+    return b;
+}

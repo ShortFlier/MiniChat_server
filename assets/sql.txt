@@ -32,6 +32,34 @@
 
 <sql path="myinvite">
 	select invitations.id, account, name, group_act, note
-	from invitations inner join account on invitations.inviter=user.account
+	from invitations inner join user on invitations.inviter=user.account
 	where invitees=:invitees
+</sql>
+
+<sql path="delinvite">
+	delete from invitations
+	where id=:id
+</sql>
+
+<sql path="newfriend">
+	insert into friends(account, friend, name)
+	values(:account, :friend, :name)
+</sql>
+
+<sql path="friendlist">
+	select id, friend, name
+	from friends
+	where account=:account
+</sql>
+
+<sql path="friendlist">
+	select id, friend, name
+	from friends
+	where account=:account
+</sql>
+
+<sql path="dlefriend">
+	delete FROM friends   
+	WHERE (account = :act AND friend = :frd)   
+    OR (account = :atc AND friend = :fdr)
 </sql>

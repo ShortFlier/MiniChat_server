@@ -4,6 +4,7 @@
 #include "dbconnect.h"
 
 #include <QObject>
+#include <vector>
 
 
 //数据库业务管理类
@@ -31,6 +32,14 @@ public:
     bool invite(DataResult& result);
     //获取邀请
     QJsonArray myinvite(const QString& account);
+    //删除邀请
+    bool delinvite(int id);
+    //新好友
+    bool newfriend(const QString& act, const QString& frd, const QString& name, const QString& selfname);
+    //好友列表
+    std::vector<Frd> friendlist(const QString& act);
+    //删除好友
+    bool dlefriend(const QString& act, const QString& frd);
 
 private:
     DBConnectPool* dbpool;

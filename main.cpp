@@ -3,7 +3,6 @@
 #include <QSqlDatabase>
 #include <QSqlError>
 
-#include "captcha.h"
 #include "application.h"
 int main(int argc, char *argv[])
 {

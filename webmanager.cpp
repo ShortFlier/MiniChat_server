@@ -44,3 +44,8 @@ void WebManager::start()
         wpool->addTempConnect(new TempConnect(sock));
     });
 }
+
+bool WebManager::online(const QString &act)
+{
+    return wpool->online(act);
+}

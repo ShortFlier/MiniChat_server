@@ -149,3 +149,8 @@ DataResult DataResult::success(const QString &msg)
     jo.insert("msg", msg);
     return DataResult(code_success, QJsonDocument(jo));
 }
+
+DataResult DataResult::success(const QJsonDocument &msg)
+{
+    return DataResult(code_success, QJsonDocument(msg));
+}

@@ -20,6 +20,8 @@ public slots:
     void removeTempConnect(TempConnect* temp);
     void upgraded(ValidConnect* vc, TempConnect* oldtc);
 
+    bool online(const QString& act);
+
 signals:
 
 private:

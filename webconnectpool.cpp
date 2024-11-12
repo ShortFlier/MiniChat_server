@@ -63,3 +63,8 @@ void WebConnectPool::upgraded(ValidConnect *vc, TempConnect* oldtc)
         qDebug()<<vc->getAccount()<<" 下线了!";
     });
 }
+
+bool WebConnectPool::online(const QString &act)
+{
+    return vcmap.contains(act);
+}
