@@ -11,8 +11,9 @@
 class Mapper : public QObject{
     Q_OBJECT
 public:
-    explicit Mapper(int size=10);
+    static Mapper* getInstance(int size=10);
     ~Mapper();
+
     //sql语句解析
     void load();
 
@@ -40,11 +41,14 @@ public:
     std::vector<Frd> friendlist(const QString& act);
     //删除好友
     bool dlefriend(const QString& act, const QString& frd);
+    //新的用户间消息
+    bool newmsg(Information& info);
 
 private:
+    explicit Mapper(int size=10);
     DBConnectPool* dbpool;
     QMap<QString, QString> path_sql;
-
+    static Mapper* m;
 };
 
 #endif // MAPPER_H

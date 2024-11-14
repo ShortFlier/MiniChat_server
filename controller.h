@@ -9,6 +9,7 @@
 #include "captcha.h"
 #include "littlesmtp.h"
 #include "mapper.h"
+#include "websocketcontroller.h"
 
 #define WEB_PARAMETER WebSocketConnect *wsc, DataHead& head, DataResult& result
 
@@ -30,6 +31,7 @@ signals:
 private:
     HttpController* hctrl;
     BinController* bctrl;
+    WebSocketController* sctrl;
 };
 
 class HttpController{

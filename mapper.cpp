@@ -8,6 +8,8 @@
 //取出连接，准备sql
 #define QUERY     QSqlDatabase db=dbpool->getdb(); QSqlQuery query(db); query.prepare(sql);
 
+Mapper* Mapper::m=new Mapper();
+
 Mapper::Mapper(int size)
 {
     dbpool=new DBConnectPool();
@@ -15,10 +17,17 @@ Mapper::Mapper(int size)
     load();
 }
 
+Mapper *Mapper::getInstance(int size)
+{
+    return m;
+}
+
 Mapper::~Mapper()
 {
     delete dbpool;
 }
+
+
 
 void Mapper::load()
 {
@@ -307,3 +316,23 @@ bool Mapper::dlefriend(const QString &act, const QString &frd)
     dbpool->append(db);
     return b;
 }
+
+bool Mapper::newmsg(Information &info)
+{
+    SQL("newmsg");
+    QUERY;
+    query.bindValue(":sender",info.sender);
+    query.bindValue(":reciver",info.reciver);
+    QString type(info.type);
+    query.bindValue(":type",type);
+    query.bindValue(":time",info.time.toString("yyyy-MM-dd HH:mm:ss"));
+    query.bindValue(":msg",info.msg);
+    bool b=query.exec();
+    if(!b)
+        qDebug()<< "Error newmsg:" << query.lastError().text();
+    query.lastQuery();
+    dbpool->append(db);
+    return b;
+}
+
+

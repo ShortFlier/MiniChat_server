@@ -63,3 +63,8 @@
 	WHERE (account = :act AND friend = :frd)   
     OR (account = :atc AND friend = :fdr)
 </sql>
+
+<sql path="newmsg">
+	insert into informations(sender,reciver,time,type,msg)
+	values(:sender,:reciver,:time,:type,:msg)
+</sql>

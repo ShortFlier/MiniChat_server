@@ -14,11 +14,14 @@ Controller::Controller(QObject *parent)
 {
     hctrl=new HttpController();
     bctrl=new BinController();
+    sctrl=new WebSocketController();
 }
 
 Controller::~Controller()
 {
     delete hctrl;
+    delete bctrl;
+    delete sctrl;
 }
 
 void Controller::handle(WebSocketConnect *wsc, DataHead &head, DataResult &result)
@@ -27,7 +30,7 @@ void Controller::handle(WebSocketConnect *wsc, DataHead &head, DataResult &resul
         auto fun = hctrl->fmap.at(*head._path);
         (hctrl->*fun)(wsc, head, result);
     }else if(*head._tp_type==DataHead::websocket){  //处理消息推送
-
+        sctrl->handler(wsc,head,result);
     }else{
         unknow(wsc, head, result);
     }
@@ -48,7 +51,8 @@ void Controller::binHandler(WebSocketConnect *wsc, DataHead &head, QJsonDocument
 
 HttpController::HttpController()
 {
-    mapper=new Mapper(10);
+    mapper=Mapper::getInstance(10);
+
     fmap.insert(Pair("login", &HttpController::login));
     fmap.insert(Pair("regist_code", &HttpController::regist_code));
     fmap.insert(Pair("regist_confirm", &HttpController::regist_confirm));
