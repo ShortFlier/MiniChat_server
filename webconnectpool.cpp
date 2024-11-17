@@ -1,6 +1,8 @@
 #include "webconnectpool.h"
 #include <QMutexLocker>
 
+WebConnectPool WebConnectPool::webpool=WebConnectPool();
+
 WebConnectPool::WebConnectPool(QObject *parent)
     : QObject{parent}
 {
@@ -67,4 +69,17 @@ void WebConnectPool::upgraded(ValidConnect *vc, TempConnect* oldtc)
 bool WebConnectPool::online(const QString &act)
 {
     return vcmap.contains(act);
+}
+
+ValidConnect *WebConnectPool::getValidConnect(const QString &account)
+{
+    ValidConnect* vc=nullptr;
+    if(vcmap.contains(account))
+        vc=vcmap.value(account);
+    return vc;
+}
+
+WebConnectPool& WebConnectPool::instanse()
+{
+    return webpool;
 }

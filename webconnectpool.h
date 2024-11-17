@@ -22,6 +22,10 @@ public slots:
 
     bool online(const QString& act);
 
+    ValidConnect* getValidConnect(const QString& account);
+
+    static WebConnectPool& instanse();
+
 signals:
 
 private:
@@ -31,6 +35,8 @@ private:
     WebTelecom* webTelecom=nullptr;
     //正规连接池
     QMap<QString,ValidConnect*> vcmap;
+
+    static WebConnectPool webpool;
 };
 
 #endif // WEBCONNECTPOOL_H

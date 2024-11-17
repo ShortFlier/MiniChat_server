@@ -5,12 +5,11 @@
 WebManager::WebManager(QObject *parent)
     : QObject{parent}
 {
-    wpool=new WebConnectPool;
+    wpool=&WebConnectPool::instanse();
 }
 
 WebManager::~WebManager()
 {
-    delete wpool;
     if(server){
         server->disconnect();
         server->close();
