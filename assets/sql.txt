@@ -68,3 +68,14 @@
 	insert into informations(sender,reciver,time,type,msg)
 	values(:sender,:reciver,:time,:type,:msg)
 </sql>
+
+<sql path="loginedmsg">
+	select id, sender, reciver, time, type, msg
+	from informations
+	where reciver=:reciver
+</sql>
+
+<sql path="loginedmsgdle">
+	delete from informations
+	where id in 
+</sql>

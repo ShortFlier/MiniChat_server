@@ -47,7 +47,6 @@ void WebConnectPool::removeTempConnect(TempConnect *temp)
 void WebConnectPool::upgraded(ValidConnect *vc, TempConnect* oldtc)
 {
     removeTempConnect(oldtc);
-    qDebug()<<"odltc";
     vcmap.insert(vc->getAccount(), vc);
     qDebug()<<vc->getAccount()<<" 上线了!";
     vc->getSocket()->disconnect();
@@ -64,6 +63,8 @@ void WebConnectPool::upgraded(ValidConnect *vc, TempConnect* oldtc)
         vcmap.remove(vc->getAccount());
         qDebug()<<vc->getAccount()<<" 下线了!";
     });
+    //消息推送
+    WebSocketController::loginedmsg(vc);
 }
 
 bool WebConnectPool::online(const QString &act)

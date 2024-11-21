@@ -335,4 +335,46 @@ bool Mapper::newmsg(Information &info)
     return b;
 }
 
+std::vector<Information> Mapper::loginedmsg(const QString &act)
+{
+    SQL("loginedmsg");
+    QUERY;
+    query.bindValue(":reciver", act);
+    std::vector<Information> data;
+    if(query.exec()){
+        while(query.next()){
+            Information info;
+            info.id=query.value(0).toUInt();
+            info.sender=query.value(1).toString();
+            info.reciver=query.value(2).toString();
+            info.time=query.value(3).toDateTime();
+            info.type=query.value(4).toString().at(0).toLatin1();
+            info.msg=query.value(5).toString();
+            data.push_back(info);
+        }
+    }
+    else
+        qDebug()<< "Error loginedmsg:" << query.lastError().text();
+    dbpool->append(db);
+    return data;
+}
+
+bool Mapper::loginedmsgdle(QJsonArray &ids)
+{
+    SQL("loginedmsgdle");
+    QUERY;
+    QStringList sls;
+    for(int i=0; i<ids.size(); ++i){
+        sls.append(QString::number(ids.at(i).toInteger()));
+    }
+    QString str="("+sls.join(',')+")";
+    sql=sql+str;
+    bool b=query.exec(sql);
+    if(!b)
+        qDebug()<< "Error newmsg:" << query.lastError().text();
+    query.lastQuery();
+    dbpool->append(db);
+    return b;
+}
+
 

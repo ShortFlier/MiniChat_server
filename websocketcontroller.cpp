@@ -12,6 +12,7 @@ WebSocketController::WebSocketController(QObject *parent)
     mapper=Mapper::getInstance(10);
 
     fmap.insert("send", &WebSocketController::send);
+    fmap.insert("loginedmsg", &WebSocketController::loginedmsgdle);
 }
 
 void WebSocketController::handler(WebSocketConnect *wsc, DataHead &head, DataResult &result)
@@ -38,4 +39,25 @@ void WebSocketController::send(WebSocketConnect *wsc, DataHead &head, DataResult
         vc->sendText(head,result);
     }else//对方不在线，保存数据库
         mapper->newmsg(info);
+}
+
+void WebSocketController::loginedmsg(ValidConnect *vc)
+{
+    qDebug()<<"loginedmsg";
+    std::vector<Information> data=Mapper::getInstance()->loginedmsg(vc->getAccount());
+    if(data.size()){
+        QJsonArray ja;
+        for(int i=0; i<data.size(); i++){
+            ja.append(data[i].json());
+        }
+        DataHead head=DataHead::wsHead("loginedmsg");
+        DataResult result(0, QJsonDocument(ja));
+        vc->sendText(head, result);
+    }
+}
+
+void WebSocketController::loginedmsgdle(WebSocketConnect *wsc, DataHead &head, DataResult &result)
+{
+    QJsonArray ids=result.jsdata.array();
+    mapper->loginedmsgdle(ids);
 }

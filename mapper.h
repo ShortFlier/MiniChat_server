@@ -43,6 +43,9 @@ public:
     bool dlefriend(const QString& act, const QString& frd);
     //新的用户间消息
     bool newmsg(Information& info);
+    //用户登入后推送消息
+    std::vector<Information> loginedmsg(const QString& act);
+    bool loginedmsgdle(QJsonArray& ids);
 
 private:
     explicit Mapper(int size=10);

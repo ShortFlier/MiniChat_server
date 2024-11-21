@@ -19,7 +19,7 @@ public:
     QString getUrl() const;
     static QString getUrl(const QString& _tp_type,const QString& _http_type,const QString& _path,const QString& _tpid);
     void invert();
-
+    static DataHead wsHead(const QString& path){return DataHead(DataHead::websocket, "none", path, "11");}
 
 public:
     enum tp_type{ws, htp};
