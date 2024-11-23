@@ -312,7 +312,6 @@ bool Mapper::dlefriend(const QString &act, const QString &frd)
     bool b=query.exec();
     if(!b)
         qDebug()<< "Error myinvite:" << query.lastError().text();
-    query.lastQuery();
     dbpool->append(db);
     return b;
 }
@@ -330,7 +329,6 @@ bool Mapper::newmsg(Information &info)
     bool b=query.exec();
     if(!b)
         qDebug()<< "Error newmsg:" << query.lastError().text();
-    query.lastQuery();
     dbpool->append(db);
     return b;
 }
@@ -375,6 +373,30 @@ bool Mapper::loginedmsgdle(QJsonArray &ids)
     query.lastQuery();
     dbpool->append(db);
     return b;
+}
+
+long Mapper::sendimg(Information &info)
+{
+    SQL("newmsg");
+    QUERY;
+    query.bindValue(":sender",info.sender);
+    query.bindValue(":reciver",info.reciver);
+    QString type(info.type);
+    query.bindValue(":type",type);
+    query.bindValue(":time",info.time.toString("yyyy-MM-dd HH:mm:ss"));
+    query.bindValue(":msg",info.msg);
+    long id=0;
+    if(!query.exec())
+        qDebug()<< "Error newmsg:" << query.lastError().text();
+    //获取自增id
+    id=query.lastInsertId().toUInt();
+    sql="update informations set msg=\'%1\' where id=%2";
+    sql=sql.arg(QString::number(id)+IMAGE_TAIL).arg(id);
+    if(!query.exec(sql)){
+        qDebug()<< "Error newmsg:" << query.lastError().text();
+    }
+    dbpool->append(db);
+    return id;
 }
 
 

@@ -61,3 +61,4 @@ void WebSocketController::loginedmsgdle(WebSocketConnect *wsc, DataHead &head, D
     QJsonArray ids=result.jsdata.array();
     mapper->loginedmsgdle(ids);
 }
+

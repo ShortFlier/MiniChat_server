@@ -45,7 +45,7 @@ void Controller::unknow(WebSocketConnect *wsc, DataHead &head, DataResult &resul
 
 void Controller::binHandler(WebSocketConnect *wsc, DataHead &head, QJsonDocument &json, QByteArray& data)
 {
-    head.showHTTP();
+    qDebug()<<head.getUrl();
     bctrl->handler(wsc,head,json,data);
 }
 

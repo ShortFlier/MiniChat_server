@@ -46,6 +46,8 @@ public:
     //用户登入后推送消息
     std::vector<Information> loginedmsg(const QString& act);
     bool loginedmsgdle(QJsonArray& ids);
+    //保存聊天图片
+    long sendimg(Information& info);
 
 private:
     explicit Mapper(int size=10);

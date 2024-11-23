@@ -47,3 +47,17 @@ QByteArray *FileController::uimgdown(QString account)
     }
     return data;
 }
+
+bool FileController::chatimg(const long &id, QByteArray &data)
+{
+    QString name=QString::number(id)+IMAGE_TAIL;
+    QString path=CHATIMG_DIR+name;
+    QFile file(path);
+    file.open(QIODeviceBase::WriteOnly);
+    bool b;
+    if(b=file.isOpen()){
+        file.write(data);
+    }
+    file.close();
+    return b;
+}

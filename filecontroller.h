@@ -4,8 +4,11 @@
 #include <QObject>
 
 #define UIMAGE_DIR "./assets/uimages/"
+#define CHATIMG_DIR "./assets/chatimgs/"
 
 #define UIMAGE_TAIL ".jpg"
+
+#define IMAGE_TAIL ".jpg"
 
 //对用户头像等文件数据管理
 class FileController : public QObject
@@ -19,6 +22,8 @@ public:
     static QString getUImg(const QString& account);
     //获取用户头像，如果没有返回nullptr
     QByteArray* uimgdown(QString account);
+    //保存聊天图片
+    bool chatimg(const long& id, QByteArray& data);
 signals:
 };
 
