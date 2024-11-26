@@ -64,6 +64,7 @@ HttpController::HttpController()
     INSERT("reinvite", &HttpController::reinvite);
     INSERT("friendlist", &HttpController::friendlist);
     INSERT("dlefriend", &HttpController::dlefriend);
+    INSERT("down", &HttpController::down);
 }
 
 HttpController::~HttpController()
@@ -267,4 +268,12 @@ void HttpController::dlefriend(WebSocketConnect *wsc, DataHead &head, DataResult
     QString act=result.getstr("account");
     QString frd=result.getstr("friend");
     mapper->dlefriend(act,frd);
+}
+
+void HttpController::down(WebSocketConnect *wsc, DataHead &head, DataResult &result)
+{
+    HEADSHOW;
+    QString act=result.getstr("account");
+    TempConnect* tc=dynamic_cast<TempConnect*>(wsc);
+    emit tc->down(act, tc);
 }

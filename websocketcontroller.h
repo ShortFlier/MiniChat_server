@@ -6,7 +6,6 @@
 
 #include "datahead.h"
 #include "websocketconnect.h"
-#include "entity.h"
 #include "mapper.h"
 #include "validconnect.h"
 

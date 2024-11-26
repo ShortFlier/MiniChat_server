@@ -31,6 +31,19 @@ void WebSocketConnect::sendBinary(const DataHead &head, int code, QByteArray &da
     socket->sendBinaryMessage(hd+data);
 }
 
+void WebSocketConnect::sendBinary(DataHead &head, QJsonDocument &jd, QByteArray &data)
+{
+    QString path=head.getUrl()+jd.toJson();
+    QByteArray h=path.toUtf8();
+    if(h.length()>HLENGTH){
+        qDebug()<<"error: 数据同步大于"+QString::number(HLENGTH)+"字节";
+        qDebug()<<path;
+        qDebug()<<path.length();
+        return;
+    }
+    h.resize(HLENGTH);
+    socket->sendBinaryMessage(h+data);
+}
 
 
 WebSocketConnect::~WebSocketConnect(){

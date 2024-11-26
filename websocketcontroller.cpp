@@ -41,7 +41,7 @@ void WebSocketController::send(WebSocketConnect *wsc, DataHead &head, DataResult
         mapper->newmsg(info);
 }
 
-void WebSocketController::loginedmsg(ValidConnect *vc)
+void WebSocketController::loginedmsg(ValidConnect* vc)
 {
     qDebug()<<"loginedmsg";
     std::vector<Information> data=Mapper::getInstance()->loginedmsg(vc->getAccount());
@@ -49,6 +49,13 @@ void WebSocketController::loginedmsg(ValidConnect *vc)
         QJsonArray ja;
         for(int i=0; i<data.size(); i++){
             ja.append(data[i].json());
+            if(data[i].type==INFO_IMGE){//图片发送
+                DownConnect* dc=WebConnectPool::instanse().getDownConnect(vc->getAccount());
+                if(dc){
+                    dc->sendimg(data[i].msg);
+                    qDebug()<<"图片发送";
+                }
+            }
         }
         DataHead head=DataHead::wsHead("loginedmsg");
         DataResult result(0, QJsonDocument(ja));

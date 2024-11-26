@@ -17,3 +17,4 @@ ValidConnect* TempConnect::upgrade(QString account)
     emit upgraded(vc, this);
     return vc;
 }
+

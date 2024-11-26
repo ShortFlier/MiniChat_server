@@ -16,6 +16,9 @@ public:
     QWebSocket* getSocket(){return socket;}
     void sendText(const DataHead& head, const DataResult& result);
     void sendBinary(const DataHead& head, int code, QByteArray& data);
+    //二进制数据发送
+    void sendBinary(DataHead& head, QJsonDocument& jd, QByteArray& data);
+
 
 signals:
     void closed();

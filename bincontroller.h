@@ -30,8 +30,10 @@ private:
     void uimgload(WebSocketConnect* wsc, DataHead& head, QJsonDocument& json, QByteArray& data);
     //下载用户头像
     void uimgdown(WebSocketConnect* wsc, DataHead& head, QJsonDocument& json, QByteArray& data);
-    //图片发送
+    //图片接收
     void sendimg(WebSocketConnect* wsc, DataHead& head, QJsonDocument& json, QByteArray& data);
+    //图片发送
+    void imgsend(WebSocketConnect* wsc, const QString& imgname, QByteArray* data);
 };
 
 #endif // BINCONTROLLER_H

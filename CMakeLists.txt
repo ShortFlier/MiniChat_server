@@ -49,6 +49,7 @@ add_executable(chat_server
   filecontroller.h filecontroller.cpp
   bincontroller.h bincontroller.cpp
   websocketcontroller.h websocketcontroller.cpp
+  downconnect.h downconnect.cpp
 )
 target_link_libraries(chat_server PUBLIC Qt${QT_VERSION_MAJOR}::Core)
 target_link_libraries(chat_server PRIVATE Qt6::WebSockets)

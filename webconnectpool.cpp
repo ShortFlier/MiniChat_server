@@ -19,6 +19,9 @@ WebConnectPool::~WebConnectPool()
     for(auto v : vcmap){
         delete v;
     }
+    for(auto v : dcmap){
+        delete v;
+    }
 }
 
 void WebConnectPool::addTempConnect(TempConnect *temp)
@@ -34,10 +37,12 @@ void WebConnectPool::addTempConnect(TempConnect *temp)
         webTelecom->textMsgHandler(temp, msg);
     });
     connect(temp, &TempConnect::upgraded, this, &WebConnectPool::upgraded);
+    connect(temp, &TempConnect::down, this, &WebConnectPool::down);
 }
 
 void WebConnectPool::removeTempConnect(TempConnect *temp)
 {
+    temp->disconnect();
     QMutexLocker<QMutex> locker(&mutex);
     //移除temp
     tempcs.removeOne(temp);
@@ -63,8 +68,32 @@ void WebConnectPool::upgraded(ValidConnect *vc, TempConnect* oldtc)
         vcmap.remove(vc->getAccount());
         qDebug()<<vc->getAccount()<<" 下线了!";
     });
-    //消息推送
-    WebSocketController::loginedmsg(vc);
+    //登入后消息推送
+    //WebSocketController::loginedmsg(vc);
+}
+
+void WebConnectPool::down(const QString &act, TempConnect *oldtc)
+{
+    DownConnect* dc=new DownConnect(act, oldtc);
+    addDownConnect(act,dc);
+    qDebug()<<act<<" down连接";
+    //登入后消息推送
+    WebSocketController::loginedmsg(getValidConnect(act));
+
+    oldtc->disconnect();
+    QMutexLocker<QMutex> locker(&mutex);
+    //移除temp
+    tempcs.removeOne(oldtc);
+}
+
+void WebConnectPool::addDownConnect(const QString &act, DownConnect *dc)
+{
+    dcmap.insert(act,dc);
+    //连接断开时，删除
+    connect(dc->getSocket(), &QWebSocket::disconnected, [=](){
+        dcmap.remove(act);
+        qDebug()<<act<<" 断开down";
+    });
 }
 
 bool WebConnectPool::online(const QString &act)
@@ -78,6 +107,14 @@ ValidConnect *WebConnectPool::getValidConnect(const QString &account)
     if(vcmap.contains(account))
         vc=vcmap.value(account);
     return vc;
+}
+
+DownConnect *WebConnectPool::getDownConnect(const QString &account)
+{
+    DownConnect *dc=nullptr;
+    if(dcmap.contains(account))
+        dc=dcmap.value(account);
+    return dc;
 }
 
 WebConnectPool& WebConnectPool::instanse()

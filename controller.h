@@ -62,6 +62,8 @@ public:
     void friendlist(WEB_PARAMETER);
     //删除好友
     void dlefriend(WEB_PARAMETER);
+    //变为down连接
+    void down(WEB_PARAMETER);
 
 public:
     std::map<QString, void(HttpController::*)(WebSocketConnect *, DataHead&, DataResult&)> fmap;

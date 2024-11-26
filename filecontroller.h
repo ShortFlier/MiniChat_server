@@ -5,6 +5,7 @@
 
 #define UIMAGE_DIR "./assets/uimages/"
 #define CHATIMG_DIR "./assets/chatimgs/"
+#define USERFILE_DIR "./assets/userfiles/"
 
 #define UIMAGE_TAIL ".jpg"
 
@@ -24,6 +25,10 @@ public:
     QByteArray* uimgdown(QString account);
     //保存聊天图片
     bool chatimg(const long& id, QByteArray& data);
+    //获取聊天图片
+    QByteArray* getChatImg(const QString& name);
+    //删除聊天图片
+    bool delChatImg(const QString& name);
 signals:
 };
 

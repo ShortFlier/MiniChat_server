@@ -61,3 +61,23 @@ bool FileController::chatimg(const long &id, QByteArray &data)
     file.close();
     return b;
 }
+
+QByteArray *FileController::getChatImg(const QString &name)
+{
+    QString path=CHATIMG_DIR+name;
+    qDebug()<<path;
+    QByteArray* data=nullptr;
+    QFile file(path);
+    file.open(QIODeviceBase::ReadOnly);
+    if(file.isOpen()){
+        data=new QByteArray(file.readAll());
+    }else
+        qDebug()<<"can't open "<<path;
+    return data;
+}
+
+bool FileController::delChatImg(const QString &name)
+{
+    QString path=CHATIMG_DIR+name;
+    return QFile::remove(path);
+}

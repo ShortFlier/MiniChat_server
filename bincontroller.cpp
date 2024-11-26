@@ -1,5 +1,6 @@
 #include "bincontroller.h"
 #include "entity.h"
+#include "webconnectpool.h"
 
 #define INSERT(path,ptr) fmaps.insert(Pair(path, ptr))
 
@@ -59,7 +60,24 @@ void BinController::sendimg(WebSocketConnect *wsc, DataHead &head, QJsonDocument
     info.type=jo.value("type").toInt();
     info.msg="image.jpg";
     info.time=QDateTime::currentDateTime();
-    long id=mapper->sendimg(info);
-    if(id)
+    //如果对方在线，转发并且不保存
+    DownConnect* dc=WebConnectPool::instanse().getDownConnect(info.reciver);
+    if(dc){
+        dc->sendimg(info,data);
+    }else{
+        long id=mapper->sendimg(info);
+        if(id)
         fc.chatimg(id, data);
+    }
+}
+
+void BinController::imgsend(WebSocketConnect *wsc, const QString &imgname, QByteArray *data)
+{
+    DataHead head=DataHead::wsHead("sendimg");
+    QByteArray d(std::move(*data));
+    delete data;
+    QJsonObject jo;
+    jo.insert("name", imgname);
+    QJsonDocument jd(jo);
+    wsc->sendBinary(head, jd, d);
 }

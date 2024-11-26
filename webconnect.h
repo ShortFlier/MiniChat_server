@@ -16,6 +16,7 @@ public:
 
 signals:
     void upgraded(ValidConnect*, TempConnect* oldtc);
+    void down(const QString& act, TempConnect* oldtc);
 };
 
 #endif // WEBCONNECT_H
